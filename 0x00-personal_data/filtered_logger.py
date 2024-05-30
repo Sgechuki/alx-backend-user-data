@@ -3,6 +3,7 @@
 Task 0: Regex-ing
 """
 from typing import List
+import re
 
 
 def filter_datum(fields: List[str],
@@ -12,13 +13,8 @@ def filter_datum(fields: List[str],
     """
     returns the log message obfuscated
     """
-    details = message.split(separator)[:-1]
-    obf = []
-    for detail in details:
-        key, value = detail.split('=')
-        if key in fields:
-            text = key + "=" + redaction + separator
-        else:
-            text = detail + separator
-        obf.append(text)
-    return "".join(obf)
+    for item in fields:
+        message = re.sub(f'{item}=.*?{separator}',
+                         f'{item}={redaction}{separator}',
+                         message)
+    return message
