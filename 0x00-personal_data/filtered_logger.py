@@ -76,3 +76,23 @@ class RedactingFormatter(logging.Formatter):
                                   self.REDACTION,
                                   record.getMessage(), self.SEPARATOR)
         return super(RedactingFormatter, self).format(record)
+
+
+def main():
+    """
+    retrieve all rows in the users table and
+    display each row under a filtered format
+    """
+    db_logger = get_logger()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    field_names = [i[0] for i in cursor.description]
+    for row in cursor:
+        db_logger.info([f'{f}={str(r)};' for r, f in zip(row, field_names)])
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
