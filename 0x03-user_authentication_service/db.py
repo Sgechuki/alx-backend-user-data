@@ -34,12 +34,11 @@ class DB:
         """
         Insert user
         """
-        session = self._session
         new_user = User(email=email, hashed_password=hashed_password)
         try:
-            session.add(new_user)
-            session.commit()
+            self._session.add(new_user)
+            self._session.commit()
         except Exception:
-            session.rollback()
+            self._session.rollback()
             raise
         return new_user
