@@ -7,6 +7,8 @@ from sqlalchemy import Column, Integer, String
 
 
 Base = declarative_base()
+
+
 class User(Base):
     """
     create a SQLAlchemy model named User
