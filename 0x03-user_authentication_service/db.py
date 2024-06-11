@@ -38,7 +38,8 @@ class DB:
         new_user = User(email=email, hashed_password=hashed_password)
         try:
             session.add(new_user)
+            session.commit()
         except Exception:
             session.rollback()
-        session.commit()
+            raise
         return new_user
