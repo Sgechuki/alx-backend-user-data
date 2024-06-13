@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """DB module
 """
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, tuple_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 from user import Base, User
+from typing import Dict
 
 
 class DB:
@@ -42,3 +44,37 @@ class DB:
             self._session.rollback()
             new_user = None
         return new_user
+
+    def find_user_by(self, **kwargs: Dict[str, str]) -> User:
+        """
+        takes in arbitrary keyword arguments and
+        returns the first row found in the users table
+        as filtered by the method’s input arguments
+        """
+        key, value = [], []
+        for k, v in kwargs.items():
+            if hasattr(User, k):
+                key.append(getattr(User, k))
+                value.append(v)
+            else:
+                raise InvalidRequestError()
+        user = self._session.query(User).filter(
+                tuple_(*key).in_([tuple(value)])).first()
+        if user is None:
+            raise NoResultFound()
+        return user
+
+    def update_user(self, user_id: int, **kwargs: Dict[str, str]) -> None:
+        """
+        updates user
+        """
+        user = self.find_user_by(id=user_id)
+        if user:
+            for k, v in kwargs.items():
+                if hasattr(user, k):
+                    attr = getattr(user, k)
+                    setattr(user, attr, v)
+                else:
+                    raise ValueError
+            self._session.commit()
+        return None
