@@ -2,7 +2,7 @@
 """
 Task 6: Basic Flask app
 """
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, abort
 from auth import Auth
 
 
