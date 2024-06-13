@@ -2,7 +2,7 @@
 """
 Task 6: Basic Flask app
 """
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response, abort
 from auth import Auth
 
 
@@ -32,6 +32,29 @@ def users():
                         "message": "user created"})
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
+
+
+@app.route("/sessions", methods=["POST"])
+def sessions():
+    """
+    If the login information is incorrect
+    use flask.abort to respond with a 401 HTTP status
+    Otherwise, create a new session for the user,
+    store it the session ID as a cookie with key "session_id"
+    on the response and return a JSON payload
+    """
+    email = request.form.get("email")
+    password = request.form.get("password")
+    if auth.valid_login(email, password):
+        ssn_id = auth.create_session(email)
+        resp = make_response(
+                             jsonify(
+                                     {"email": "{}".format(email),
+                                      "message": "logged in"}))
+        resp.set_cookie('session_id', ssn_id)
+        return resp
+    else:
+        abort(401)
 
 
 if __name__ == "__main__":
