@@ -72,8 +72,8 @@ class DB:
         if user:
             for k, v in kwargs.items():
                 if hasattr(user, k):
-                    attr = getattr(user, k)
-                    setattr(user, attr, v)
+                    #attr = getattr(user, k)
+                    setattr(user, k, v)
                 else:
                     raise ValueError
             self._session.commit()
