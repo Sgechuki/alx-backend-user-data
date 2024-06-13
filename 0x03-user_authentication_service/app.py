@@ -35,7 +35,7 @@ def users():
 
 
 @app.route("/sessions", methods=["POST"])
-def sessions():
+def login():
     """
     If the login information is incorrect
     use flask.abort to respond with a 401 HTTP status
