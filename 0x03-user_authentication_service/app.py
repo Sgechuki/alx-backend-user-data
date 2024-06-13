@@ -2,11 +2,11 @@
 """
 Task 6: Basic Flask app
 """
-from flask import Flask, jsonify, request, make_response, abort
+from flask import Flask, jsonify, request, make_response
 from auth import Auth
 
 
-auth = Auth()
+AUTH = Auth()
 app = Flask(__name__)
 
 
@@ -26,7 +26,7 @@ def users():
     email = request.form.get("email")
     password = request.form.get("password")
     try:
-        auth.register_user(email, password)
+        AUTH.register_user(email, password)
         return jsonify(
                        {"email": "{}".format(email),
                         "message": "user created"})
@@ -34,7 +34,7 @@ def users():
         return jsonify({"message": "email already registered"}), 400
 
 
-@app.route("/sessions", methods=["POST"])
+@app.route("/sessions", methods=["POST"], strict_slashes=False)
 def login():
     """
     If the login information is incorrect
@@ -45,8 +45,8 @@ def login():
     """
     email = request.form.get("email")
     password = request.form.get("password")
-    if auth.valid_login(email, password):
-        ssn_id = auth.create_session(email)
+    if AUTH.valid_login(email, password):
+        ssn_id = AUTH.create_session(email)
         resp = jsonify({"email": "{}".format(email), "message": "logged in"})
         resp.set_cookie('session_id', ssn_id)
         return resp
