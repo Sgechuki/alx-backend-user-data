@@ -7,6 +7,7 @@ from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
 import uuid
+from typing import Union
 
 
 def _hash_password(password: str) -> bytes:
@@ -72,5 +73,29 @@ class Auth:
                 self._db.update_user(user.id, session_id=ssn_id)
                 return ssn_id
         except NoResultFound:
+            pass
+        return None
+
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
+        """
+        takes a single session_id string argument
+        and returns the corresponding User or None
+        """
+        if session_id:
+            try:
+                user = self._db.find_user_by(session_id=session_id)
+                if user:
+                    return user
+            except NoResultFound:
+                pass
+        return None
+
+    def destroy_session(user_id: int) -> None:
+        """
+        updates the corresponding user’s session ID to None
+        """
+        try:
+            self._db.update_user(user_id, session_id=None)
+        except ValueError:
             pass
         return None
