@@ -90,7 +90,7 @@ class Auth:
                 pass
         return None
 
-    def destroy_session(self, ser_id: int) -> None:
+    def destroy_session(self, user_id: int) -> None:
         """
         updates the corresponding user’s session ID to None
         """
