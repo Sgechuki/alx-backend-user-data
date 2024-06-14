@@ -8,7 +8,6 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 from user import Base, User
-from typing import Dict
 
 
 class DB:
@@ -45,7 +44,7 @@ class DB:
             new_user = None
         return new_user
 
-    def find_user_by(self, **kwargs: Dict[str, str]) -> User:
+    def find_user_by(self, **kwargs) -> User:
         """
         takes in arbitrary keyword arguments and
         returns the first row found in the users table
@@ -64,7 +63,7 @@ class DB:
             raise NoResultFound()
         return user
 
-    def update_user(self, user_id: int, **kwargs: Dict[str, str]) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """
         updates user
         """
@@ -72,7 +71,6 @@ class DB:
         if user:
             for k, v in kwargs.items():
                 if hasattr(user, k):
-                    #attr = getattr(user, k)
                     setattr(user, k, v)
                 else:
                     raise ValueError
